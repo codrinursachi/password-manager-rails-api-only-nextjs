@@ -1,3 +1,4 @@
+"use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoginDropdown from "./login-dropdown";
@@ -42,8 +43,9 @@ const transformToLogin = (individualFormData: FormData): Login => ({
 function LoginsTable() {
     const searchParams = useSearchParams();
     const { data, error } = useQuery<{ logins: Login[] }>({
-        queryKey: ["logins", searchParams?.toString()??""],
-        queryFn: ({ signal }) => queryLogins(searchParams?.toString()??"", signal),
+        queryKey: ["logins", searchParams?.toString() ?? ""],
+        queryFn: ({ signal }) =>
+            queryLogins(searchParams?.toString() ?? "", signal),
     });
 
     useEffect(() => {
@@ -54,7 +56,10 @@ function LoginsTable() {
                     label: "Retry",
                     onClick: () =>
                         queryClient.invalidateQueries({
-                            queryKey: ["logins", searchParams?.toString()??""],
+                            queryKey: [
+                                "logins",
+                                searchParams?.toString() ?? "",
+                            ],
                         }),
                 },
             });
@@ -97,7 +102,13 @@ function LoginsTable() {
         },
     });
     const sharedLoginMutation = useMutation({
-        mutationFn: async ({ formData, loginId }: { formData: FormData; loginId: string }) => {
+        mutationFn: async ({
+            formData,
+            loginId,
+        }: {
+            formData: FormData;
+            loginId: string;
+        }) => {
             navigate.push("/shared-logins/by-me");
             await mutateSharedLogin(formData, loginId);
         },

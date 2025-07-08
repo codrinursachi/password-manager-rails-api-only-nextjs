@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import {
     SidebarGroup,
@@ -6,6 +7,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "../ui/sidebar";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const specialLocations = [
     ["All logins", "/logins"],
@@ -16,13 +18,11 @@ const specialLocations = [
     ["SSH Keys", "/ssh-keys"],
 ];
 
-function SidebarFoldersGroups({
-    currentUrl,
-    children,
-}: {
-    currentUrl: string;
-    children: React.ReactNode;
-}) {
+function SidebarFoldersGroups({ children }: { children: React.ReactNode }) {
+    const searchParams = useSearchParams();
+    const currentUrl =
+        usePathname() +
+        (searchParams.toString() ? "?" + searchParams.toString() : "");
     return (
         <>
             <SidebarGroup>

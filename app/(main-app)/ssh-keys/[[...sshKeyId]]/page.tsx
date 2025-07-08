@@ -1,21 +1,17 @@
-"use client"
 import SSHKeyDialog from "@/components/ssh-keys/ssh-key-dialog";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import SSHKeysTable from "@/components/ssh-keys/ssh-keys-table";
+import Link from "next/link";
 
 function SSHKeysPage() {
-    const navigate = useRouter();
     return (
         <div className="flex flex-col gap-4">
             <h1>SSH Keys</h1>
-            <Button
-                variant="outline"
-                onClick={() => navigate.push("/ssh-keys/new")}
-                className="w-46"
-            >
-                Add SSH key
-            </Button>
+            <Link href="/ssh-keys/new">
+                <Button variant="outline" className="w-46">
+                    Add SSH key
+                </Button>
+            </Link>
             <div className="flex flex-wrap gap-4">
                 <SSHKeysTable />
             </div>

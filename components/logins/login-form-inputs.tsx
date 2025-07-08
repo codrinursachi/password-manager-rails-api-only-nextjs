@@ -74,7 +74,7 @@ const LoginFormInputs: React.FC<{
         if (individualLogin) {
             decryptPass();
         }
-    }, [individualLogin]);
+    }, [individualLogin, props]);
 
     return (
         <div className="grid gap-4 py-4" onChange={handleChange}>
@@ -146,7 +146,7 @@ const LoginFormInputs: React.FC<{
                 <Input
                     type="hidden"
                     name="login[urls_attributes][0][id]"
-                    value={individualLogin?.urls[0]?.id}
+                    value={individualLogin?.urls[0]?.id || ""}
                 />
                 {isFetching ? (
                     <Skeleton className="col-span-3 h-8" />

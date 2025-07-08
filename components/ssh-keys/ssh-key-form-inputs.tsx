@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
 function SSHKeyFormInputs() {
-    const params = useParams().keyId || [];
+    const params = useParams().sshKeyId || [];
     const id = !isNaN(Number(params[0])) ? params[0] : "";
     const [privateKey, setPrivateKey] = useState("");
     const [publicKey, setPublicKey] = useState("");

@@ -18,8 +18,8 @@ import { queryClient } from "@/util/query-utils/query-client";
 import { toast } from "sonner";
 
 function SSHKeyDialog() {
-    const params = useParams().keyId ?? [];
-    const keyId = !isNaN(Number(params[0])) ? params[0] : undefined;
+    const params = useParams().sshKeyId ?? [];
+    const keyId = !isNaN(+params[0]) ? params[0] : undefined;
     const isNew = usePathname().includes("new");
     const [dialogOpen, setDialogOpen] = useState(false);
     useEffect(() => {
@@ -40,7 +40,8 @@ function SSHKeyDialog() {
                 description: "Error saving SSH key",
                 action: {
                     label: "Try again",
-                    onClick: () => sshKeyMutation.mutate(sshKeyMutation.variables!),
+                    onClick: () =>
+                        sshKeyMutation.mutate(sshKeyMutation.variables!),
                 },
             });
         },

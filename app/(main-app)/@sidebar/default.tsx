@@ -1,4 +1,3 @@
-"use client";
 import {
     Sidebar,
     SidebarContent,
@@ -6,14 +5,12 @@ import {
     SidebarHeader,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import SidebarUserFoldersGroup from "./sidebar-user-folders-group";
-import SidebarFoldersGroups from "./sidebar-folders-groups";
-import { usePathname, useRouter } from "next/navigation";
+import SidebarUserFoldersGroup from "@/components/sidebar/sidebar-user-folders-group";
+import SidebarFoldersGroups from "@/components/sidebar/sidebar-folders-groups";
+import ActionableLogoutButton from "@/components/actionable-items/actioniable-logout-button";
+import { redirect } from "next/navigation";
 
-export function AppSidebar() {
-    const router = useRouter();
-    const currentUrl = usePathname();
+export default function AppSidebar() {
     return (
         <Sidebar>
             <SidebarHeader>
@@ -23,19 +20,12 @@ export function AppSidebar() {
                 </Link>
             </SidebarHeader>
             <SidebarContent>
-                <SidebarFoldersGroups currentUrl={currentUrl}>
+                <SidebarFoldersGroups>
                     <SidebarUserFoldersGroup />
                 </SidebarFoldersGroups>
             </SidebarContent>
             <SidebarFooter>
-                <Button
-                    onClick={() => {
-                        localStorage.clear();
-                        router.push("/login");
-                    }}
-                >
-                    Logout
-                </Button>
+                <ActionableLogoutButton />
             </SidebarFooter>
         </Sidebar>
     );

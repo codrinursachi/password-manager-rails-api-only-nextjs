@@ -1,3 +1,4 @@
+"use client";
 import { MoreHorizontal } from "lucide-react";
 import {
     DropdownMenu,
@@ -39,15 +40,15 @@ const TrashedLoginDropdown: React.FC<{ login: TrashedLogin }> = (props) => {
             method: "DELETE" | "PATCH";
         }) => {
             event.preventDefault();
-            mutateTrashedLogin(loginId.toString(), method);
+            await mutateTrashedLogin(loginId.toString(), method);
         },
-        onError: (error: Error) => {
+        onError: (error: Error, variables) => {
             console.error(error);
             toast.error(error.message, {
                 description: "Error performing trashed login action",
                 action: {
                     label: "Try again",
-                    onClick: () => console.log("Undo"),
+                    onClick: () => trashedLoginMutation.mutate(variables),
                 },
             });
         },

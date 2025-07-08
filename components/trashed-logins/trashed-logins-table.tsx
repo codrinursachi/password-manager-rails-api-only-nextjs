@@ -1,4 +1,5 @@
-import { Link } from "react-router";
+"use client";
+import Link from "next/link";
 import {
     Table,
     TableBody,
@@ -8,8 +9,12 @@ import {
     TableRow,
 } from "../ui/table";
 import TrashedLoginDropdown from "./trashed-login-dropdown";
-import React from "react";
+import React, { useEffect } from "react";
 import { TableContentSkeleton } from "../skeletons/table-content-skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { queryTrashedLogins } from "@/util/query-utils/query-trashed-logins";
+import { toast } from "sonner";
+import { queryClient } from "@/util/query-utils/query-client";
 
 type TrashedLogin = {
     login_id: number;
@@ -18,9 +23,25 @@ type TrashedLogin = {
     trash_date: string;
 };
 
-const TrashedLoginsTable: React.FC<{ trashedLogins: TrashedLogin[] }> = (
-    props
-) => {
+function TrashedLoginsTable() {
+    const { data, error } = useQuery<{ trashedLogins: TrashedLogin[] }>({
+        queryKey: ["trashedLogins"],
+        queryFn: ({ signal }) => queryTrashedLogins(signal),
+    });
+    useEffect(() => {
+        if (error) {
+            toast.error(error.message, {
+                description: "Failed to load trashed logins.",
+                action: {
+                    label: "Retry",
+                    onClick: () =>
+                        queryClient.invalidateQueries({
+                            queryKey: ["trashedLogins"],
+                        }),
+                },
+            });
+        }
+    }, [error]);
     return (
         <Table className="table-fixed">
             <TableHeader>
@@ -34,19 +55,21 @@ const TrashedLoginsTable: React.FC<{ trashedLogins: TrashedLogin[] }> = (
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {!props.trashedLogins && (
-                    <TableContentSkeleton cellNumber={4} />
-                )}
-                {props.trashedLogins?.map((login) => (
+                {!data?.trashedLogins && <TableContentSkeleton cellNumber={4} />}
+                {data?.trashedLogins?.map((login) => (
                     <TableRow key={login.login_id}>
                         <TableCell>
-                            <Link to={"/trash/" + login.login_id}>
+                            <Link href={"/trash/" + login.login_id}>
                                 <div className="w-full">{login.name}</div>
                             </Link>
                         </TableCell>
                         <TableCell>
                             <Link
-                                to={"//" + login.urls[0]}
+                                href={
+                                    (login.urls[0].includes("http") &&
+                                        login.urls[0]) ||
+                                    "//" + login.urls[0]
+                                }
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -62,6 +85,6 @@ const TrashedLoginsTable: React.FC<{ trashedLogins: TrashedLogin[] }> = (
             </TableBody>
         </Table>
     );
-};
+}
 
 export default TrashedLoginsTable;
