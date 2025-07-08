@@ -119,7 +119,6 @@ const LoginDropdown: React.FC<{
                         <form
                             onSubmit={(event) => {
                                 event.preventDefault();
-                                console.log(event.currentTarget);
                                 props.sharedLoginMutation.mutate({
                                     loginId: props.login.login_id.toString(),
                                     formData: new FormData(event.currentTarget),

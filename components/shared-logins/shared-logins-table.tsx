@@ -15,6 +15,7 @@ import { useMutationState, useQuery } from "@tanstack/react-query";
 import { querySharedLogins } from "@/util/query-utils/query-shared-logins";
 import { toast } from "sonner";
 import { queryClient } from "@/util/query-utils/query-client";
+import { usePathname } from "next/navigation";
 
 type SharedLogin = {
     login_id: number;
@@ -29,8 +30,8 @@ type SharedLogin = {
 };
 
 function SharedLoginsTable() {
-    const url = new URL(window.location.href);
-    const queryParameter = url.pathname.includes("by-me") ? "by_me=true" : "";
+    const url = usePathname();
+    const queryParameter = url.includes("by-me") ? "by_me=true" : "";
     const { data, error } = useQuery({
         queryKey: ["sharedLogins", queryParameter],
         queryFn: ({ signal }) => querySharedLogins(queryParameter, signal),
@@ -38,10 +39,9 @@ function SharedLoginsTable() {
     const pendingSharedLoginsAdd = useMutationState({
         filters: { mutationKey: ["sharedLogins", "add"], status: "pending" },
         select: (mutation) => {
-            const formdata = new FormData(
-                (mutation.state.variables as React.FormEvent<HTMLFormElement>)
-                    .target as HTMLFormElement
-            );
+            const formdata = (
+                mutation.state.variables as { formData: FormData }
+            ).formData;
             return {
                 name: formdata.get("shared_login_datum[name]")!.toString(),
                 login_name: formdata
@@ -93,57 +93,61 @@ function SharedLoginsTable() {
             </TableHeader>
             <TableBody>
                 {!data?.sharedLogins && <TableContentSkeleton cellNumber={5} />}
-                {data?.sharedLogins?.map((login: SharedLogin) => {
-                    const pendingDelete = pendingSharedLoginsDelete.find(
-                        (loginId) => loginId === login.id.toString()
-                    );
-                    return (
-                        <TableRow
-                            key={login.login_id}
-                            className={pendingDelete ? "text-red-500" : ""}
-                        >
-                            <TableCell>
-                                <Link
-                                    href={
-                                        "/shared-logins/" +
-                                        (queryParameter
-                                            ? "by-me/"
-                                            : "with-me/") +
-                                        login.login_id
-                                    }
-                                >
-                                    <div className="w-full">{login.name}</div>
-                                </Link>
-                            </TableCell>
-                            <TableCell>{login.login_name}</TableCell>
-                            <TableCell>
-                                <Link
-                                    href={"//" + login.urls[0]}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <div className="w-full">
-                                        {login.urls[0]}
-                                    </div>
-                                </Link>
-                            </TableCell>
-                            <TableCell>
-                                {queryParameter ? (
-                                    <div className="w-full">
-                                        {login.shared_with}
-                                    </div>
-                                ) : (
-                                    <div className="w-full">
-                                        {login.shared_by}
-                                    </div>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                <SharedLoginDropdown login={login} />
-                            </TableCell>
-                        </TableRow>
-                    );
-                })}
+                {data?.sharedLogins?.map(
+                    (login: SharedLogin, index: number) => {
+                        const pendingDelete = pendingSharedLoginsDelete.find(
+                            (loginId) => loginId === login.id.toString()
+                        );
+                        return (
+                            <TableRow
+                                key={index}
+                                className={pendingDelete ? "text-red-500" : ""}
+                            >
+                                <TableCell>
+                                    <Link
+                                        href={
+                                            "/shared-logins/" +
+                                            (queryParameter
+                                                ? "by-me/"
+                                                : "with-me/") +
+                                            login.login_id
+                                        }
+                                    >
+                                        <div className="w-full">
+                                            {login.name}
+                                        </div>
+                                    </Link>
+                                </TableCell>
+                                <TableCell>{login.login_name}</TableCell>
+                                <TableCell>
+                                    <Link
+                                        href={"//" + login.urls[0]}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <div className="w-full">
+                                            {login.urls[0]}
+                                        </div>
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                    {queryParameter ? (
+                                        <div className="w-full">
+                                            {login.shared_with}
+                                        </div>
+                                    ) : (
+                                        <div className="w-full">
+                                            {login.shared_by}
+                                        </div>
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    <SharedLoginDropdown login={login} />
+                                </TableCell>
+                            </TableRow>
+                        );
+                    }
+                )}
                 {pendingSharedLoginsAdd.map((login, index) => (
                     <TableRow key={index} className="text-gray-500">
                         <TableCell>
