@@ -19,8 +19,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 
 const LoginDialog = () => {
     const params = useParams().loginId ?? [];
-    const loginId =
-        params.length > 0 && !isNaN(+params[0]) ? params[0] : undefined;
+    const loginId = [...params].find((param: string) => !isNaN(+param));
     const [isNew, isEditable] = [
         usePathname().includes("new"),
         usePathname().includes("edit"),

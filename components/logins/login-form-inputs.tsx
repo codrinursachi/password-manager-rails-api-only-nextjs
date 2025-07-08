@@ -28,8 +28,7 @@ const LoginFormInputs: React.FC<{
     setValid: (valid: boolean) => void;
 }> = (props) => {
     const params = useParams().loginId ?? [];
-    const id =
-        params.length > 0 && !isNaN(Number(params[0])) ? params[0] : null;
+    const id = [...params].find((param: string) => !isNaN(+param));
     const nameRef = useRef<HTMLInputElement>(null);
     const usernameRef = useRef<HTMLInputElement>(null);
     const urlRef = useRef<HTMLInputElement>(null);
