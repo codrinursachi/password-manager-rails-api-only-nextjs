@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useState } from "react";
 
-export default function RouteGuard({ children }: { children: React.ReactNode }) {
+export default function RouteGuard({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const router = useRouter();
     const [authorized, setAuthorized] = useState(false);
 
@@ -19,7 +23,10 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
                 localStorage.clear();
             };
             addEventListener("beforeunload", handleBeforeUnload);
-
+            setTimeout(() => {
+                localStorage.clear();
+                router.push("/login");
+            }, new Date(localStorage.getItem("expiration") || "").getTime() - Date.now());
             return () => {
                 removeEventListener("beforeunload", handleBeforeUnload);
             };
