@@ -44,7 +44,6 @@ const FoldersDropdown: React.FC<{ folder: { id: number; name: string } }> = (
             await mutateFolder(formData, folderId.toString(), method);
         },
         onError: (error: Error) => {
-            console.error(error);
             toast.error(error.message, {
                 description: "Error performing folder action",
                 action: {

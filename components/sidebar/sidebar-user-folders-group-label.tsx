@@ -23,13 +23,12 @@ function SidebarUserFoldersGroupLabel() {
             const formData = new FormData(event.target as HTMLFormElement);
             await mutateFolder(formData, null, "POST");
         },
-        onError: (error: Error) => {
-            console.error(error);
+        onError: (error: Error, variables) => {
             toast.error(error.message, {
                 description: "Error creating folder",
                 action: {
                     label: "Try again",
-                    onClick: () => console.log("Undo"),
+                    onClick: () => folderMutation.mutate(variables),
                 },
             });
         },
